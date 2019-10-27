@@ -40,6 +40,18 @@ def get_results_from_url(url: str, date_cutoff = None):
 
 
 if __name__ == '__main__':
+    # TODO
+    #  fix TypeError: Cannot compare tz-naive and tz-aware timestamps between
+    #  dates from feed and dates generated locally
+    #
+    # TODO
+    #  add a way to email myself the new listings
+    #
+    # TODO
+    #  add a way to persist the datetime for each search for reuse on next run
+    #
+    # TODO
+    #  automate everything
 
     item_of_interest = 'refrigerator'
     rss_url = f'http://providence.craigslist.org/search/sss?format=rss&query={item_of_interest}'
