@@ -25,7 +25,6 @@ def get_results_from_url(url: str, date_cutoff = None) -> List[dict]:
     entries_list = []
 
     for entry in CL_Feed.entries:
-        id = entry.id
         title = entry.title
         link = entry.link
         date_published = entry.published  # format: '2019-10-27T14:17:12-04:00'
@@ -37,7 +36,6 @@ def get_results_from_url(url: str, date_cutoff = None) -> List[dict]:
         if date_cutoff is None or date_published > date_cutoff:
             entries_list.append(
                 dict(
-                    id=id,
                     title=title,
                     link=link,
                     published=date_published))
@@ -56,30 +54,68 @@ def send_email(email_body: str):
         data={"from": "CraigsList searchbot <admin@mail.coralvanda.com>",
               "to": ["angelinadowell@gmail.com", "coralvanda@gmail.com"],
               "subject": "Latest search results",
-              "text": email_body})
+              "html": email_body})
+
+
+def build_html_email_body(fridges, washers, dryers, combos) -> str:
+    fridge_content = build_links_from_list(title='Fridges', content_list=fridges)
+    washer_content = build_links_from_list(title='Washers', content_list=washers)
+    dryer_content = build_links_from_list(title='Dryers', content_list=dryers)
+    washer_dryer_combo_content = build_links_from_list(
+        title='Washer/dryer combos',
+        content_list=combos)
+
+    template = """
+    <body>
+        {fridge_content}
+        {washer_content}
+        {dryer_content}
+        {washer_dryer_combo_content}
+    </body>
+    """.format(
+        fridge_content=fridge_content,
+        washer_content=washer_content,
+        dryer_content=dryer_content,
+        washer_dryer_combo_content=washer_dryer_combo_content)
+
+    return template
+
+
+def build_links_from_list(title: str, content_list: List[dict]) -> str:
+    base_string = f'<br><h4>{title}</h4><br>'
+
+    for item in content_list:
+        base_string += '<a href="{link}"><p>{title}</p></a><br>'.format(
+            link=item['link'],
+            title=item['title'])
+
+    return base_string
 
 
 if __name__ == '__main__':
     twelve_hour_delta = timedelta(hours=12)
     twelve_hours_ago = datetime.now() - twelve_hour_delta
 
-    response_list = get_results_from_url(
+    fridge_list = get_results_from_url(
         url=build_url(item_of_interest='refrigerator'),
         date_cutoff=twelve_hours_ago)
 
-    response_list.extend(get_results_from_url(
+    washer_list = get_results_from_url(
         url=build_url(item_of_interest='washer'),
-        date_cutoff=twelve_hours_ago))
+        date_cutoff=twelve_hours_ago)
 
-    response_list.extend(get_results_from_url(
+    dryer_list = get_results_from_url(
         url=build_url(item_of_interest='dryer'),
-        date_cutoff=twelve_hours_ago))
+        date_cutoff=twelve_hours_ago)
 
-    response_list.extend(get_results_from_url(
+    washer_dryer_combo_list = get_results_from_url(
         url=build_url(item_of_interest='washer dryer'),
-        date_cutoff=twelve_hours_ago))
+        date_cutoff=twelve_hours_ago)
 
-    for entry in response_list:
-        print(entry['title'])
-        print(entry['published'])
-        print()
+    email_body = build_html_email_body(
+        fridges=fridge_list,
+        washers=washer_list,
+        dryers=dryer_list,
+        combos=washer_dryer_combo_list)
+
+    send_email(email_body=email_body)
