@@ -49,6 +49,7 @@ def build_url(item_of_interest: str) -> str:
 
 
 def send_email(email_body: str):
+    print('Sending search results as email')
     return requests.post(
         "https://api.mailgun.net/v3/mail.coralvanda.com/messages",
         auth=("api", os.environ.get(MAILGUN_API_KEY)),
@@ -59,6 +60,7 @@ def send_email(email_body: str):
 
 
 def send_error_email(text):
+    print('An error occurred, sending email report')
     requests.post(
         "https://api.mailgun.net/v3/mail.coralvanda.com/messages",
         auth=("api", os.environ.get(MAILGUN_API_KEY)),
@@ -133,3 +135,5 @@ if __name__ == '__main__':
 
     if response.status_code != 200:
         send_error_email(text=response.content)
+
+    print('Process completed')
