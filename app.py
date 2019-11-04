@@ -44,7 +44,8 @@ def get_results_from_url(url: str, date_cutoff = None) -> List[dict]:
 
 
 def build_url(item_of_interest: str) -> str:
-    return f'http://providence.craigslist.org/search/sss?format=rss&query={item_of_interest}'
+    return 'http://providence.craigslist.org/search/sss?format=rss&query={item_of_interest}'.format(
+        item_of_interest=item_of_interest)
 
 
 def send_email(email_body: str):
@@ -92,7 +93,7 @@ def build_html_email_body(fridges, washers, dryers, combos) -> str:
 
 
 def build_links_from_list(title: str, content_list: List[dict]) -> str:
-    base_string = f'<br><h4>{title}</h4><br>'
+    base_string = '<br><h4>{title}</h4><br>'.format(title=title)
 
     for item in content_list:
         base_string += '<a href="{link}"><p>{title}</p></a><br>'.format(
