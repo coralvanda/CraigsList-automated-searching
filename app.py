@@ -57,6 +57,16 @@ def send_email(email_body: str):
               "html": email_body})
 
 
+def send_error_email(text):
+    requests.post(
+        "https://api.mailgun.net/v3/mail.coralvanda.com/messages",
+        auth=("api", os.environ.get(MAILGUN_API_KEY)),
+        data={"from": "CraigsList searchbot <admin@mail.coralvanda.com>",
+              "to": ["coralvanda@gmail.com"],
+              "subject": "Error with CraigsList bot",
+              "text": f"The CraigsList bot encountered an error: {text}"})
+
+
 def build_html_email_body(fridges, washers, dryers, combos) -> str:
     fridge_content = build_links_from_list(title='Fridges', content_list=fridges)
     washer_content = build_links_from_list(title='Washers', content_list=washers)
@@ -118,4 +128,7 @@ if __name__ == '__main__':
         dryers=dryer_list,
         combos=washer_dryer_combo_list)
 
-    send_email(email_body=email_body)
+    response = send_email(email_body=email_body)
+
+    if response.status_code != 200:
+        send_error_email(text=response.content)
