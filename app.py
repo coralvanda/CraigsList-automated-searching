@@ -52,7 +52,7 @@ def send_email(email_body: str):
         "https://api.mailgun.net/v3/mail.coralvanda.com/messages",
         auth=("api", os.environ.get(MAILGUN_API_KEY)),
         data={"from": "CraigsList searchbot <admin@mail.coralvanda.com>",
-              "to": ["angelinadowell@gmail.com", "coralvanda@gmail.com"],
+              "to": ["coralvanda@gmail.com"],
               "subject": "Latest search results",
               "html": email_body})
 
