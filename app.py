@@ -65,7 +65,7 @@ def send_error_email(text):
         data={"from": "CraigsList searchbot <admin@mail.coralvanda.com>",
               "to": ["coralvanda@gmail.com"],
               "subject": "Error with CraigsList bot",
-              "text": f"The CraigsList bot encountered an error: {text}"})
+              "text": "The CraigsList bot encountered an error: {text}".format(text=text)})
 
 
 def build_html_email_body(fridges, washers, dryers, combos) -> str:
